@@ -1,0 +1,27 @@
+{
+  "name": "nodebb-plugin-post-notification",
+  "version": "0.0.5",
+  "description": "Dead-simple NodeBB plugin that sends emails to specific addresses whenever a new post is made.",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/pvnick/nodebb-plugin-post-notification"
+  },
+  "keywords": [
+    "nodebb",
+    "post",
+    "notification"
+  ],
+  "license": "MIT",
+  "dependencies": {},
+  "nbbpm": {
+    "compatibility": "^0.7.0"
+  },
+  "readme": "no readme yet",
+  "readmeFilename": "README.md",
+  "homepage": "https://github.com/pvnick/nodebb-plugin-post-notification",
+  "scripts": {},
+  "bugs": {
+    "url": "https://github.com/pvnick/nodebb-plugin-post-notification/issues"
+  }
+}
