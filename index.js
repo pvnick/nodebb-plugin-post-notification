@@ -4,6 +4,7 @@ var path = require('path'),
     Meta = module.parent.require('./meta'),
     User = module.parent.require('./user'),
     Plugins = module.parent.require('./plugins'),
+    Topics = module.parent.require('./topics'),
     PostNotification = {};
 
 PostNotification.init = function(args,callback) {
@@ -55,29 +56,41 @@ PostNotification.postSaved = function(postData) {
         urlPrefix = Meta.config['postnotification:urlPrefix'],
         recipientList = Meta.config['postnotification:emails'],
         recipients = getEmails(recipientList);
+
     winston.log("[PostNotification] post saved");
     if ( ! recipients || recipients.length == 0) {
         winston.warn('[PostNotification] No recipients configured or invalid recipient list!');
-    } else {
-        User.getUserData(userID, function(err, userData) {
-            var username = userData.username;
-            if (Plugins.hasListeners('action:email.send')) {
-                for (var i = 0; i != recipients.length; ++i) {
-                    var recipient = recipients[i].trim();
-                    Plugins.fireHook('action:email.send', {
-                        to: recipient,
-                        from: Meta.config['email:from'] || 'no-reply@localhost.lan',
-                        subject: "[Forum] Post saved",
-                        html: '<p><a href="' + urlPrefix + '/topic/' + topicID + '/">A post has been made or edited by <b>' + username + '</a>:</p>\n\n<p>' + content + '</p>',
-                        plaintext: 'A post has been made or edited by <b>' + username + ' (' + urlPrefix + '/topic/' + topicID + '/):\n\n' + content,
-                        template: "post-notification"
-                    });
-                }
-            } else {
-                winston.warn('[emailer] No active email plugin found!');
+        return;
+    } 
+    if ( ! Plugins.hasListeners('action:email.send')) {
+        winston.warn('[emailer] No active email plugin found!');
+        return;
+    }    
+    User.getUserData(userID, function(err, userData) {
+        if (err) {
+            winston.error('[PostNotification] Could not look up user data!');
+            return;
+        } 
+        var username = userData.username;
+        Topics.getTopicField(tid, 'slug', function(err, slug) {
+            if (err || ! slug || slug === topicID + '/') {
+                winston.error('[PostNotification] Could not get topic slug!');
+                return;
+            }
+            for (var i = 0; i != recipients.length; ++i) {
+                var recipient = recipients[i].trim();
+                Plugins.fireHook('action:email.send', {
+                    to: recipient,
+                    from: Meta.config['email:from'] || 'no-reply@localhost.lan',
+                    subject: "[Forum] Post saved",
+                    html: '<p><a href="' + urlPrefix + '/topic/' + topicID + '/' + encodeURI(slug) + '">A post has been made or edited by <b>' + username + '</a>:</p>\n\n<p>' + content + '</p>',
+                    plaintext: 'A post has been made or edited by <b>' + username + ' (' + urlPrefix + '/topic/' + topicID + '/' + encodeURI(slug) + '):\n\n' + content,
+                    template: "post-notification"
+                });
             }
         });
-    }
+
+    });
 }
 
 module.exports = PostNotification;
