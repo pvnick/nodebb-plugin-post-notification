@@ -34,22 +34,22 @@ PostNotification.admin = {
     }
 };
 
-function getEmails(commaSeparatedList) {
-    if (typeof(commaSeparatedList) != "string")
-        return null;
-    var emailListSplit = commaSeparatedList.split(","),
-        emails = [];
-        validEmailRE = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i;
-    for (var i = 0; i != emailListSplit.length; ++i) {
-        var email = emailListSplit[i].trim();
-        if ( ! validEmailRE.test(email)) 
-            return null;
-        emails.push(email);
-    }
-    return emails;
-}
-
 PostNotification.postSaved = function(postData) {
+    function getEmails(commaSeparatedList) {
+        if (typeof(commaSeparatedList) != "string")
+            return null;
+        var emailListSplit = commaSeparatedList.split(","),
+            emails = [];
+            validEmailRE = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i;
+        for (var i = 0; i != emailListSplit.length; ++i) {
+            var email = emailListSplit[i].trim();
+            if ( ! validEmailRE.test(email)) 
+                return null;
+            emails.push(email);
+        }
+        return emails;
+    }
+
     var userID = postData.uid,
         content = postData.content,
         topicID = postData.tid,
@@ -83,7 +83,7 @@ PostNotification.postSaved = function(postData) {
                     to: recipient,
                     from: Meta.config['email:from'] || 'no-reply@localhost.lan',
                     subject: "[Forum] Post saved",
-                    html: '<p><a href="' + urlPrefix + '/topic/' + encodeURI(slug) + '">A post has been made or edited by <b>' + username + '</a>:</p>\n\n<p>' + content + '</p>',
+                    html: slug + '<p><a href="' + urlPrefix + '/topic/' + encodeURI(slug) + '">A post has been made or edited by <b>' + username + '</a>:</p>\n\n<p>' + content + '</p>',
                     plaintext: 'A post has been made or edited by <b>' + username + ' (' + urlPrefix + '/topic/' + encodeURI(slug) + '):\n\n' + content,
                     template: "post-notification"
                 });
