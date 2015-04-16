@@ -1,6 +1,4 @@
-var path = require('path'),
-    winston = module.parent.require('winston'),
-    nconf = module.parent.require('nconf'),
+var winston = module.parent.require('winston'),
     Meta = module.parent.require('./meta'),
     User = module.parent.require('./user'),
     Plugins = module.parent.require('./plugins'),
@@ -8,17 +6,16 @@ var path = require('path'),
     PostNotification = {};
 
 PostNotification.init = function(args,callback) {
-  var app = args.router,
-  middleware = args.middleware,
-  controllers = args.controllers;
+    var app = args.router,
+        middleware = args.middleware,
+        controllers = args.controllers;
+
     function renderAdminPage(req, res, next) {
         res.render('admin/post-notification/config', {});
     }
-
+    
     app.get('/admin/post-notification/config', middleware.admin.buildHeader,[], renderAdminPage);
     app.get('/api/admin/post-notification/config', renderAdminPage);
-
-
     callback();
 };
 
@@ -29,7 +26,6 @@ PostNotification.admin = {
             "icon": 'fa-envelope-o',
             "name": 'Post Notification'
         });
-
         callback(null, custom_header);
     }
 };
@@ -63,7 +59,7 @@ PostNotification.postSaved = function(postData) {
         return;
     } 
     if ( ! Plugins.hasListeners('action:email.send')) {
-        winston.warn('[emailer] No active email plugin found!');
+        winston.warn('[PostNotification] No active email plugin found!');
         return;
     }    
     User.getUserData(userID, function(err, userData) {
@@ -78,18 +74,17 @@ PostNotification.postSaved = function(postData) {
                 return;
             }
             for (var i = 0; i != recipients.length; ++i) {
-                var recipient = recipients[i].trim();
+                var recipient = recipients[i];
                 Plugins.fireHook('action:email.send', {
                     to: recipient,
                     from: Meta.config['email:from'] || 'no-reply@localhost.lan',
                     subject: "[Forum] Post saved",
-                    html: slug + '<p><a href="' + urlPrefix + '/topic/' + encodeURI(slug) + '">A post has been made or edited by <b>' + username + '</a>:</p>\n\n<p>' + content + '</p>',
+                    html: '<p><a href="' + urlPrefix + '/topic/' + encodeURI(slug) + '">A post has been made or edited by <b>' + username + '</a>:</p>\n\n<p>' + content + '</p>',
                     plaintext: 'A post has been made or edited by <b>' + username + ' (' + urlPrefix + '/topic/' + encodeURI(slug) + '):\n\n' + content,
                     template: "post-notification"
                 });
             }
         });
-
     });
 }
 
