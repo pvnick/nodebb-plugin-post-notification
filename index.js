@@ -72,7 +72,7 @@ PostNotification.postSaved = function(postData) {
             return;
         } 
         var username = userData.username;
-        Topics.getTopicField(tid, 'slug', function(err, slug) {
+        Topics.getTopicField(topicID, 'slug', function(err, slug) {
             if (err || ! slug || slug === topicID + '/') {
                 winston.error('[PostNotification] Could not get topic slug!');
                 return;
@@ -83,8 +83,8 @@ PostNotification.postSaved = function(postData) {
                     to: recipient,
                     from: Meta.config['email:from'] || 'no-reply@localhost.lan',
                     subject: "[Forum] Post saved",
-                    html: '<p><a href="' + urlPrefix + '/topic/' + topicID + '/' + encodeURI(slug) + '">A post has been made or edited by <b>' + username + '</a>:</p>\n\n<p>' + content + '</p>',
-                    plaintext: 'A post has been made or edited by <b>' + username + ' (' + urlPrefix + '/topic/' + topicID + '/' + encodeURI(slug) + '):\n\n' + content,
+                    html: '<p><a href="' + urlPrefix + '/topic/' + encodeURI(slug) + '">A post has been made or edited by <b>' + username + '</a>:</p>\n\n<p>' + content + '</p>',
+                    plaintext: 'A post has been made or edited by <b>' + username + ' (' + urlPrefix + '/topic/' + encodeURI(slug) + '):\n\n' + content,
                     template: "post-notification"
                 });
             }
