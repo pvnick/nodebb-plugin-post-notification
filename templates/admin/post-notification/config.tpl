@@ -19,6 +19,12 @@
 					<input type="text" class="form-control" id="postnotification:emails" data-field="postnotification:emails" />
 				</div>
 			</div>
+			<div class="col-sm-12">
+				<div class="form-group">
+					<label for="postnotification:urlPrefix">Forum base url (eg https://example.com/forum)</label>
+					<input type="text" class="form-control" id="postnotification:urlPrefix" data-field="postnotification:urlPrefix" />
+				</div>
+			</div>
 		</div>
 
 		<button class="btn btn-lg btn-primary" id="save">Save</button>

@@ -52,6 +52,7 @@ PostNotification.postSaved = function(postData) {
     var userID = postData.uid,
         content = postData.content,
         topicID = postData.tid,
+        urlPrefix = Meta.config['postnotification:urlPrefix'],
         recipientList = Meta.config['postnotification:emails'],
         recipients = getEmails(recipientList);
     winston.log("[PostNotification] post saved");
@@ -67,8 +68,8 @@ PostNotification.postSaved = function(postData) {
                         to: recipient,
                         from: Meta.config['email:from'] || 'no-reply@localhost.lan',
                         subject: "[Forum] Post saved",
-                        html: '<p><a href="' + nconf.get('url') + '/topic/' + topicID + '/">A post has been made or edited by <b>' + username + '</a>:</p>\n\n<p>' + content + '</p>',
-                        plaintext: 'A post has been made or edited by <b>' + username + ' (' + nconf.get('url') + '/topic/' + topicID + '/):\n\n' + content,
+                        html: '<p><a href="' + urlPrefix + '/topic/' + topicID + '/">A post has been made or edited by <b>' + username + '</a>:</p>\n\n<p>' + content + '</p>',
+                        plaintext: 'A post has been made or edited by <b>' + username + ' (' + urlPrefix + '/topic/' + topicID + '/):\n\n' + content,
                         template: "post-notification"
                     });
                 }
