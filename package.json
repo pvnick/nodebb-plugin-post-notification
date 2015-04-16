@@ -1,6 +1,6 @@
 {
   "name": "nodebb-plugin-post-notification",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "Dead-simple NodeBB plugin that sends emails to specific addresses whenever a new post is made.",
   "main": "index.js",
   "repository": {
